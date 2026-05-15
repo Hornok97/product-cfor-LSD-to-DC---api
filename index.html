@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Livesport AI Agent — DC API prototype</title>
+<title>LSD AI Agent — DC API prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -110,7 +110,7 @@
     <div id="terminal">
       <div style="color: var(--blue);">$ livesport-ai --session</div>
       <div style="color: var(--text-dim); margin: 4px 0 14px;">Connected to Claude (sonnet-4.6) · DC API endpoint: https://dc-api.livesport.internal/v2</div>
-      <div style="color: var(--text-faint); font-size: 12px;">Klikni na scénář níže...</div>
+      <div style="color: var(--text-faint); font-size: 12px;">Klikni na scénář níže</div>
     </div>
 
     <div class="terminal-input">
@@ -123,8 +123,8 @@
   <div class="demo-controls">
     <h3>Demo scénáře</h3>
     <div class="scenarios">
-      <button class="scenario-btn primary" onclick="demoQuery1()" id="btn-1">1. Vyšetřit zápas 359845 (read-only)</button>
-      <button class="scenario-btn primary" onclick="demoQuery2()" id="btn-2">2. Kvido Esport season — režimy + providers (write)</button>
+      <button class="scenario-btn primary" onclick="demoQuery1()" id="btn-1">1. U zápasu 359845 mohlo dojít k chybě (read-only)</button>
+      <button class="scenario-btn primary" onclick="demoQuery2()" id="btn-2">2. Kvido Esport season start — režimy + providers (write)</button>
       <button class="scenario-btn" onclick="resetTerminal()">↺ reset</button>
     </div>
   </div>
