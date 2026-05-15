@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Livesport AI Agent — Prototyp pro DC API access</title>
+<title>Livesport AI Agent — DC API prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -28,329 +28,89 @@
     --success-bg: #1e3a1e;
     --warning-bg: #2d2419;
   }
-
   * { box-sizing: border-box; }
-
-  body {
-    margin: 0;
-    padding: 0;
-    background: var(--bg);
-    font-family: 'Inter', -apple-system, sans-serif;
-    color: var(--text);
-    min-height: 100vh;
-  }
-
-  .page {
-    max-width: 980px;
-    margin: 0 auto;
-    padding: 24px 20px;
-  }
-
-  .header {
-    margin-bottom: 20px;
-    padding: 16px 0;
-  }
-
-  .header h1 {
-    font-size: 20px;
-    font-weight: 600;
-    margin: 0 0 4px;
-    color: #fff;
-  }
-
-  .header p {
-    font-size: 13px;
-    color: var(--text-dim);
-    margin: 0;
-  }
-
-  .header .badges {
-    display: flex;
-    gap: 6px;
-    margin-top: 10px;
-    flex-wrap: wrap;
-  }
-
-  .badge {
-    font-size: 11px;
-    padding: 3px 8px;
-    background: #1f1f1f;
-    border: 0.5px solid var(--border);
-    border-radius: 4px;
-    color: var(--cyan);
-    font-family: 'JetBrains Mono', monospace;
-  }
-
-  .terminal {
-    background: var(--term-bg);
-    border-radius: 8px;
-    overflow: hidden;
-    border: 0.5px solid var(--border);
-    font-family: 'JetBrains Mono', 'Courier New', monospace;
-    font-size: 13px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-  }
-
-  .terminal-header {
-    background: var(--term-header);
-    padding: 8px 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    border-bottom: 0.5px solid var(--border);
-  }
-
+  body { margin: 0; padding: 0; background: var(--bg); font-family: 'Inter', -apple-system, sans-serif; color: var(--text); min-height: 100vh; }
+  .page { max-width: 980px; margin: 0 auto; padding: 24px 20px; }
+  .header { margin-bottom: 20px; padding: 16px 0; }
+  .header h1 { font-size: 20px; font-weight: 600; margin: 0 0 4px; color: #fff; }
+  .header p { font-size: 13px; color: var(--text-dim); margin: 0; }
+  .header .badges { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+  .badge { font-size: 11px; padding: 3px 8px; background: #1f1f1f; border: 0.5px solid var(--border); border-radius: 4px; color: var(--cyan); font-family: 'JetBrains Mono', monospace; }
+  .terminal { background: var(--term-bg); border-radius: 8px; overflow: hidden; border: 0.5px solid var(--border); font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 13px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+  .terminal-header { background: var(--term-header); padding: 8px 14px; display: flex; align-items: center; gap: 8px; border-bottom: 0.5px solid var(--border); }
   .dots { display: flex; gap: 6px; }
   .dot { width: 11px; height: 11px; border-radius: 50%; }
   .dot.r { background: #ff5f56; }
   .dot.y { background: #ffbd2e; }
   .dot.g { background: #27c93f; }
-
-  .terminal-title {
-    color: #999;
-    font-size: 12px;
-    margin-left: 8px;
-  }
-
-  .terminal-status {
-    margin-left: auto;
-    color: var(--text-faint);
-    font-size: 11px;
-  }
-
-  #terminal {
-    padding: 16px 18px;
-    height: 620px;
-    overflow-y: auto;
-    color: var(--text);
-    line-height: 1.55;
-  }
-
+  .terminal-title { color: #999; font-size: 12px; margin-left: 8px; }
+  .terminal-status { margin-left: auto; color: var(--text-faint); font-size: 11px; }
+  #terminal { padding: 16px 18px; height: 620px; overflow-y: auto; color: var(--text); line-height: 1.55; }
   #terminal::-webkit-scrollbar { width: 8px; }
   #terminal::-webkit-scrollbar-track { background: var(--term-bg); }
   #terminal::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-
-  .terminal-input {
-    padding: 10px 14px;
-    background: #232323;
-    border-top: 0.5px solid var(--border);
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-
-  .terminal-input span {
-    color: var(--teal);
-  }
-
-  .terminal-input input {
-    flex: 1;
-    background: transparent;
-    border: none;
-    color: var(--text);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    outline: none;
-    padding: 4px 0;
-  }
-
-  .terminal-input button {
-    font-size: 11px;
-    padding: 5px 12px;
-    background: #2a2a2a;
-    border: 0.5px solid var(--border);
-    border-radius: 4px;
-    color: var(--text);
-    cursor: pointer;
-    font-family: 'JetBrains Mono', monospace;
-  }
-
-  .terminal-input button:hover {
-    background: #333;
-  }
-
-  /* Terminal content styles */
-  .tool-call {
-    background: #252525;
-    border-left: 2px solid var(--blue);
-    padding: 8px 12px;
-    margin: 8px 0;
-    border-radius: 0 4px 4px 0;
-  }
-
-  .tool-call-header {
-    color: var(--blue);
-    font-size: 11px;
-  }
-
-  .data-block {
-    margin: 10px 0;
-    padding: 10px 12px;
-    background: #252525;
-    border-radius: 4px;
-  }
-
-  .data-grid {
-    display: grid;
-    grid-template-columns: 110px 1fr;
-    gap: 4px 12px;
-    font-size: 12px;
-  }
-
-  .warning {
-    margin: 14px 0 8px;
-    padding: 10px 12px;
-    background: var(--warning-bg);
-    border-left: 2px solid var(--yellow);
-    border-radius: 0 4px 4px 0;
-  }
-
-  .pill-button {
-    font-size: 11px;
-    padding: 4px 9px;
-    background: #2a2a2a;
-    border: 0.5px solid var(--border);
-    border-radius: 4px;
-    color: var(--cyan);
-    cursor: pointer;
-    font-family: 'JetBrains Mono', monospace;
-  }
-
-  .pill-button:hover {
-    background: #333;
-  }
-
-  .pill-button.confirm {
-    background: var(--success-bg);
-    border-color: #2d5a2d;
-    color: var(--green);
-  }
-
+  .terminal-input { padding: 10px 14px; background: #232323; border-top: 0.5px solid var(--border); display: flex; gap: 8px; align-items: center; }
+  .terminal-input span { color: var(--teal); }
+  .terminal-input input { flex: 1; background: transparent; border: none; color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 13px; outline: none; padding: 4px 0; }
+  .terminal-input button { font-size: 11px; padding: 5px 12px; background: #2a2a2a; border: 0.5px solid var(--border); border-radius: 4px; color: var(--text); cursor: pointer; font-family: 'JetBrains Mono', monospace; }
+  .terminal-input button:hover { background: #333; }
+  .tool-call { background: #252525; border-left: 2px solid var(--blue); padding: 8px 12px; margin: 8px 0; border-radius: 0 4px 4px 0; }
+  .tool-call.write { border-left-color: var(--yellow); }
+  .tool-call-header { color: var(--blue); font-size: 11px; }
+  .tool-call.write .tool-call-header { color: var(--yellow); }
+  .data-block { margin: 10px 0; padding: 10px 12px; background: #252525; border-radius: 4px; }
+  .data-grid { display: grid; grid-template-columns: 110px 1fr; gap: 4px 12px; font-size: 12px; }
+  .warning { margin: 14px 0 8px; padding: 10px 12px; background: var(--warning-bg); border-left: 2px solid var(--yellow); border-radius: 0 4px 4px 0; }
+  .pill-button { font-size: 11px; padding: 4px 9px; background: #2a2a2a; border: 0.5px solid var(--border); border-radius: 4px; color: var(--cyan); cursor: pointer; font-family: 'JetBrains Mono', monospace; }
+  .pill-button:hover { background: #333; }
+  .pill-button.confirm { background: var(--success-bg); border-color: #2d5a2d; color: var(--green); }
   @keyframes blink { 50% { opacity: 0; } }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(2px); } to { opacity: 1; transform: translateY(0); } }
   .fade-in { animation: fadeIn 0.25s ease-out; }
-
-  .blink-dot {
-    display: inline-block;
-    width: 7px;
-    height: 7px;
-    background: var(--yellow);
-    border-radius: 50%;
-    animation: blink 0.6s infinite;
-  }
-
-  .cursor {
-    display: inline-block;
-    width: 7px;
-    height: 14px;
-    background: var(--text);
-    animation: blink 1s step-end infinite;
-    vertical-align: middle;
-  }
-
-  .footer {
-    margin-top: 20px;
-    padding: 12px 0;
-    color: var(--text-faint);
-    font-size: 12px;
-    text-align: center;
-  }
-
-  .footer a {
-    color: var(--cyan);
-    text-decoration: none;
-  }
-
-  .footer a:hover {
-    text-decoration: underline;
-  }
-
-  /* Demo controls panel */
-  .demo-controls {
-    margin-top: 16px;
-    padding: 14px 16px;
-    background: #1a1a1a;
-    border: 0.5px solid var(--border);
-    border-radius: 8px;
-  }
-
-  .demo-controls h3 {
-    font-size: 12px;
-    font-weight: 500;
-    margin: 0 0 10px;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .demo-controls .scenarios {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
-  .scenario-btn {
-    font-size: 12px;
-    padding: 6px 12px;
-    background: #252525;
-    border: 0.5px solid var(--border);
-    border-radius: 4px;
-    color: var(--text);
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    transition: all 0.15s;
-  }
-
-  .scenario-btn:hover {
-    background: #2f2f2f;
-    border-color: var(--blue);
-  }
-
-  .scenario-btn.primary {
-    background: #1e3a5f;
-    border-color: var(--blue);
-    color: var(--cyan);
-  }
-
-  .scenario-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  code.inline {
-    color: var(--orange);
-    font-family: 'JetBrains Mono', monospace;
-  }
+  .blink-dot { display: inline-block; width: 7px; height: 7px; background: var(--yellow); border-radius: 50%; animation: blink 0.6s infinite; }
+  .footer { margin-top: 20px; padding: 12px 0; color: var(--text-faint); font-size: 12px; text-align: center; }
+  .footer a { color: var(--cyan); text-decoration: none; }
+  .footer a:hover { text-decoration: underline; }
+  .demo-controls { margin-top: 16px; padding: 14px 16px; background: #1a1a1a; border: 0.5px solid var(--border); border-radius: 8px; }
+  .demo-controls h3 { font-size: 12px; font-weight: 500; margin: 0 0 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
+  .demo-controls .scenarios { display: flex; gap: 8px; flex-wrap: wrap; }
+  .scenario-btn { font-size: 12px; padding: 6px 12px; background: #252525; border: 0.5px solid var(--border); border-radius: 4px; color: var(--text); cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s; }
+  .scenario-btn:hover { background: #2f2f2f; border-color: var(--blue); }
+  .scenario-btn.primary { background: #1e3a5f; border-color: var(--blue); color: var(--cyan); }
+  .scenario-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  code.inline { color: var(--orange); font-family: 'JetBrains Mono', monospace; }
+  table.tournaments { width: 100%; border-collapse: collapse; font-size: 12px; margin: 6px 0; }
+  table.tournaments th { text-align: left; color: var(--text-dim); font-weight: 500; padding: 4px 8px; border-bottom: 0.5px solid var(--border); font-size: 11px; }
+  table.tournaments td { padding: 6px 8px; border-bottom: 0.5px solid #2a2a2a; }
+  table.tournaments tr.highlight td { background: #2d2419; }
+  .mode-badge { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 11px; font-weight: 500; }
+  .mode-7 { background: rgba(78, 201, 176, 0.15); color: var(--teal); }
+  .mode-6 { background: rgba(215, 186, 125, 0.15); color: var(--yellow); }
 </style>
 </head>
 <body>
 <div class="page">
   <div class="header">
-    <h1>Livesport AI Agent <span style="color: var(--text-dim); font-weight: 400; font-size: 14px;">— prototyp pro DC API access</span></h1>
-    <p>Simulace agenta nad Claude API s přístupem do Elasticu, DB, GitLabu a screenshot serveru.</p>
+    <h1>Livesport AI Agent <span style="color: var(--text-dim); font-weight: 400; font-size: 14px;">— prototyp DC API integrace</span></h1>
+    <p>Simulace agenta postaveného na Claude API s přístupem k internímu DC API.</p>
     <div class="badges">
       <span class="badge">PROTOTYP</span>
-      <span class="badge">mock data</span>
       <span class="badge">claude-sonnet-4.6</span>
-      <span class="badge">5 MCP tools</span>
+      <span class="badge">DC API only</span>
     </div>
   </div>
 
   <div class="terminal">
     <div class="terminal-header">
-      <div class="dots">
-        <div class="dot r"></div>
-        <div class="dot y"></div>
-        <div class="dot g"></div>
-      </div>
+      <div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div>
       <span class="terminal-title">michal@livesport-ai — agent session</span>
       <span class="terminal-status" id="status-indicator">● ready</span>
     </div>
 
     <div id="terminal">
       <div style="color: var(--blue);">$ livesport-ai --session</div>
-      <div style="color: var(--text-dim); margin: 4px 0 14px;">Connected to Claude (sonnet-4.6) · MCP tools: search_logs, query_db, get_user, fetch_screenshot, search_gitlab</div>
-      <div style="color: var(--text-faint); font-size: 12px;">Klikni na scénář níže nebo napiš dotaz do inputu...</div>
+      <div style="color: var(--text-dim); margin: 4px 0 14px;">Connected to Claude (sonnet-4.6) · DC API endpoint: https://dc-api.livesport.internal/v2</div>
+      <div style="color: var(--text-faint); font-size: 12px;">Klikni na scénář níže...</div>
     </div>
 
     <div class="terminal-input">
@@ -363,10 +123,8 @@
   <div class="demo-controls">
     <h3>Demo scénáře</h3>
     <div class="scenarios">
-      <button class="scenario-btn primary" onclick="demoQuery1()" id="btn-1">1. Vyšetřit zápas 359845</button>
-      <button class="scenario-btn" onclick="quickFill('Najdi další zápasy přidané janosekem v posledních 24h')">2. Aktivita janoseka</button>
-      <button class="scenario-btn" onclick="quickFill('Ukaž mi celou historii zápasu 359845 včetně všech editů')">3. Historie editů</button>
-      <button class="scenario-btn" onclick="quickFill('Vytvoř ticket pro benesla aby překontroloval 1xbit2.com provider')">4. Ticket s confirmation</button>
+      <button class="scenario-btn primary" onclick="demoQuery1()" id="btn-1">1. Vyšetřit zápas 359845 (read-only)</button>
+      <button class="scenario-btn primary" onclick="demoQuery2()" id="btn-2">2. Kvido Esport season — režimy + providers (write)</button>
       <button class="scenario-btn" onclick="resetTerminal()">↺ reset</button>
     </div>
   </div>
@@ -381,6 +139,11 @@
   const input = document.getElementById('user-input');
   const status = document.getElementById('status-indicator');
   let busy = false;
+
+  // State for multi-step scenario 2
+  let s2 = {
+    step: 0  // 0 = nothing, 1 = listed tournaments, 2 = switched mode, 3 = listed providers
+  };
 
   function scrollDown() { term.scrollTop = term.scrollHeight; }
 
@@ -404,11 +167,29 @@
     return s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
   }
 
-  async function typeText(element, text, speed = 14) {
+  async function typeText(element, text, speed = 10) {
     for (let i = 0; i < text.length; i++) {
       element.textContent += text[i];
       if (i % 3 === 0) await delay(speed);
     }
+  }
+
+  async function autoType(query) {
+    busy = true;
+    input.disabled = true;
+    const typedSpan = document.createElement('span');
+    input.parentElement.insertBefore(typedSpan, input);
+    input.style.display = 'none';
+    typedSpan.style.color = 'var(--text)';
+    typedSpan.style.flex = '1';
+    typedSpan.style.fontFamily = "'JetBrains Mono', monospace";
+    typedSpan.style.fontSize = '13px';
+    await typeText(typedSpan, query, 8);
+    await delay(400);
+    typedSpan.remove();
+    input.style.display = '';
+    input.disabled = false;
+    busy = false;
   }
 
   async function submitQuery() {
@@ -427,25 +208,18 @@
 
   async function demoQuery1() {
     if (busy) return;
-    const q = 'Ahoj, u zápasu mohlo dojít ke špatnému přidání. ID je 359845, najdi mi v logách kdo všechno zápas přidával, kdo ho checkoval, kolik bylo přidáno providerů a jaké. Najdi mi to v Elasticu.';
-    busy = true;
     document.getElementById('btn-1').disabled = true;
+    const q = 'Ahoj, u zápasu mohlo dojít ke špatnému přidání. ID je 359845, najdi mi v logách kdo všechno zápas přidával, kdo ho checkoval, kolik bylo přidáno providerů a jaké. Najdi mi to v DC API.';
+    await autoType(q);
+    await runQuery(q);
+  }
 
-    input.disabled = true;
-    const typedSpan = document.createElement('span');
-    input.parentElement.insertBefore(typedSpan, input);
-    input.style.display = 'none';
-    typedSpan.style.color = 'var(--text)';
-    typedSpan.style.flex = '1';
-    typedSpan.style.fontFamily = "'JetBrains Mono', monospace";
-    typedSpan.style.fontSize = '13px';
-    await typeText(typedSpan, q, 10);
-    await delay(400);
-    typedSpan.remove();
-    input.style.display = '';
-    input.disabled = false;
-
-    busy = false;
+  async function demoQuery2() {
+    if (busy) return;
+    document.getElementById('btn-2').disabled = true;
+    s2.step = 0;
+    const q = 'Projdi mi Kvido season Starty na Esport, které jsou už vypsané. Dej mi info, jaký režim je nastaven u všech turnajů.';
+    await autoType(q);
     await runQuery(q);
   }
 
@@ -453,10 +227,12 @@
     if (busy) return;
     term.innerHTML = `
       <div style="color: var(--blue);">$ livesport-ai --session</div>
-      <div style="color: var(--text-dim); margin: 4px 0 14px;">Connected to Claude (sonnet-4.6) · MCP tools: search_logs, query_db, get_user, fetch_screenshot, search_gitlab</div>
-      <div style="color: var(--text-faint); font-size: 12px;">Klikni na scénář níže nebo napiš dotaz do inputu...</div>
+      <div style="color: var(--text-dim); margin: 4px 0 14px;">Connected to Claude (sonnet-4.6) · DC API endpoint: https://dc-api.livesport.internal/v2</div>
+      <div style="color: var(--text-faint); font-size: 12px;">Klikni na scénář níže...</div>
     `;
     document.getElementById('btn-1').disabled = false;
+    document.getElementById('btn-2').disabled = false;
+    s2 = { step: 0 };
     setStatus('● ready', 'var(--text-faint)');
   }
 
@@ -472,14 +248,20 @@
     await delay(300);
 
     const ql = q.toLowerCase();
-    if (ql.includes('359845') && ql.includes('histor')) {
-      await scenarioHistory();
-    } else if (ql.includes('359845') || (ql.includes('zápas') && !ql.includes('janosek'))) {
+
+    // Routing — scenario 2 has internal state machine
+    if (s2.step === 1 && (ql.includes('přepni') || ql.includes('prepni') || ql.includes('režim 7') || ql.includes('rezim 7') || ql.includes('mode 7'))) {
+      await s2_switchMode();
+    } else if (s2.step === 2 && (ql.includes('naklon') || ql.includes('lon') || ql.includes('provider'))) {
+      await s2_listProviders();
+    } else if (s2.step === 3 && (ql.includes('bwin') || ql.includes('místo') || ql.includes('misto') || ql.includes('doplň') || ql.includes('doplnit'))) {
+      await s2_replaceAndExecute();
+    } else if (s2.step === 3 && ql.includes('zruš')) {
+      append(`<div style="margin: 8px 0; color: var(--text-dim);">OK, nic se nepřidává. Můžeš se k tomu vrátit kdykoliv.</div>`);
+    } else if (ql.includes('359845')) {
       await scenarioMatch();
-    } else if (ql.includes('janosek')) {
-      await scenarioJanoseka();
-    } else if (ql.includes('ticket') || ql.includes('recheck')) {
-      await scenarioTicket();
+    } else if (ql.includes('esport') || ql.includes('kvido') || ql.includes('turnaj') || (ql.includes('režim') && s2.step === 0) || (ql.includes('rezim') && s2.step === 0)) {
+      await s2_listTournaments();
     } else {
       await scenarioGeneric(q);
     }
@@ -490,31 +272,32 @@
     input.focus();
   }
 
-  async function toolCall(num, total, name, params, hits, ms) {
-    setStatus(`● calling ${name}`, 'var(--blue)');
+  async function toolCall(num, total, name, params, hits, ms, isWrite) {
+    setStatus(`● calling ${name}`, isWrite ? 'var(--yellow)' : 'var(--blue)');
     const div = append(`
-      <div class="tool-call">
-        <div class="tool-call-header">▸ TOOL CALL <span style="color: var(--text-faint);">[${num}/${total}]</span></div>
+      <div class="tool-call ${isWrite ? 'write' : ''}">
+        <div class="tool-call-header">▸ ${isWrite ? 'WRITE' : 'READ'} <span style="color: var(--text-faint);">[${num}/${total}]</span></div>
         <div style="margin-top: 2px; word-break: break-word;"><span style="color: var(--tan);">${name}</span>(${params})</div>
-        <div class="result" style="color: var(--text-dim); font-size: 11px; margin-top: 4px;"><span class="blink-dot"></span> running...</div>
+        <div class="result" style="color: var(--text-dim); font-size: 11px; margin-top: 4px;"><span class="blink-dot"></span> calling DC API...</div>
       </div>
     `);
     await delay(550 + Math.random() * 350);
-    div.querySelector('.result').innerHTML = `<span style="color: var(--green);">✓ ${hits} · ${ms}ms</span>`;
+    div.querySelector('.result').innerHTML = `<span style="color: var(--green);">✓ ${hits} · ${ms}ms · DC API /v2</span>`;
   }
 
+  // ═══════════════════════ SCENARIO 1 ═══════════════════════
   async function scenarioMatch() {
-    append(`<div style="margin: 8px 0;">Jdu na to. Rozdělím to do tří dotazů — insert events, check events a aktivní providery pro <code class="inline">event_id=359845</code>.</div>`);
+    append(`<div style="margin: 8px 0;">Jdu na to. Rozdělím to do tří dotazů na DC API — insert events, check events a aktivní providery pro <code class="inline">event_id=359845</code>.</div>`);
     await delay(500);
 
-    await toolCall(1, 3, 'search_logs',
-      '<span style="color: var(--cyan);">index</span>=<span style="color: var(--orange);">"crawler-events-*"</span>, <span style="color: var(--cyan);">query</span>=<span style="color: var(--orange);">"entity_id:359845 AND action:insert"</span>',
-      '1 hit', 142);
-    await toolCall(2, 3, 'search_logs',
-      '<span style="color: var(--cyan);">index</span>=<span style="color: var(--orange);">"cml-checks-*"</span>, <span style="color: var(--cyan);">query</span>=<span style="color: var(--orange);">"entity_id:359845 AND entity_type_id:1"</span>',
-      '1 hit', 89);
-    await toolCall(3, 3, 'query_db',
-      '<span style="color: var(--cyan);">table</span>=<span style="color: var(--orange);">"event_providers"</span>, <span style="color: var(--cyan);">where</span>=<span style="color: var(--orange);">"event_id=359845"</span>',
+    await toolCall(1, 3, 'dc_api.get_event_logs',
+      '<span style="color: var(--cyan);">event_id</span>=<span style="color: var(--orange);">359845</span>, <span style="color: var(--cyan);">action</span>=<span style="color: var(--orange);">"insert"</span>',
+      '1 entry', 142);
+    await toolCall(2, 3, 'dc_api.get_cml_checks',
+      '<span style="color: var(--cyan);">entity_id</span>=<span style="color: var(--orange);">359845</span>, <span style="color: var(--cyan);">entity_type_id</span>=<span style="color: var(--orange);">1</span>',
+      '1 entry', 89);
+    await toolCall(3, 3, 'dc_api.get_event_providers',
+      '<span style="color: var(--cyan);">event_id</span>=<span style="color: var(--orange);">359845</span>',
       '1 row', 34);
 
     setStatus('● composing', 'var(--purple)');
@@ -579,104 +362,200 @@
         <a href="http://167.235.234.135:8081/?alerts_puppeteer=screenshot_18902389_1778317826862.jpg" target="_blank" style="text-decoration: none; font-size: 12px; padding: 4px 10px; background: #2a2a2a; border: 0.5px solid var(--border); border-radius: 4px; color: var(--cyan);">🖼 screenshot_18902389</a>
       </div>
     `);
+  }
+
+  // ═══════════════════════ SCENARIO 2 ═══════════════════════
+  // Step 1: List tournaments
+  async function s2_listTournaments() {
+    append(`<div style="margin: 8px 0;">Vytáhnu seznam vypsaných Kvido season startů pro sport <code class="inline">Esports</code>.</div>`);
+    await delay(400);
+
+    await toolCall(1, 1, 'dc_api.get_kvido_season_starts',
+      '<span style="color: var(--cyan);">sport</span>=<span style="color: var(--orange);">"esports"</span>, <span style="color: var(--cyan);">status</span>=<span style="color: var(--orange);">"published"</span>',
+      '4 tournaments', 168);
+
+    setStatus('● composing', 'var(--purple)');
+    await delay(400);
+
+    append(`<div style="margin: 12px 0 6px;">Našel jsem <span style="color: var(--yellow);">4 vypsané turnaje</span>:</div>`);
+
+    append(`
+      <div class="data-block">
+        <table class="tournaments">
+          <thead>
+            <tr><th>ID</th><th>Tournament</th><th>Game</th><th>Season start</th><th>Režim</th></tr>
+          </thead>
+          <tbody>
+            <tr><td style="color: var(--tan);">kv_4421</td><td>ESL Pro League S20</td><td>CS2</td><td>2026-06-02</td><td><span class="mode-badge mode-7">mode 7</span></td></tr>
+            <tr><td style="color: var(--tan);">kv_4422</td><td>BLAST Premier Spring Finals</td><td>CS2</td><td>2026-06-10</td><td><span class="mode-badge mode-7">mode 7</span></td></tr>
+            <tr class="highlight"><td style="color: var(--tan);">kv_4423</td><td>LEC Summer Split</td><td>LoL</td><td>2026-06-15</td><td><span class="mode-badge mode-6">mode 6</span></td></tr>
+            <tr><td style="color: var(--tan);">kv_4424</td><td>Dota 2 Riyadh Masters</td><td>Dota 2</td><td>2026-07-20</td><td><span class="mode-badge mode-7">mode 7</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    `);
+
+    await delay(500);
+
+    append(`
+      <div style="margin: 10px 0;">Souhrn: <span style="color: var(--teal);">3 turnaje mají mode 7</span>, <span style="color: var(--yellow);">1 turnaj má mode 6</span> — <code class="inline">kv_4423</code> (LEC Summer Split). Vypadá to jako odchylka, ostatní LoL/CS2/Dota turnaje této sezony jedou standardně na mode 7.</div>
+    `);
+
+    s2.step = 1;
+
+    await delay(400);
 
     append(`
       <div style="margin: 14px 0 6px; color: var(--text-dim); font-size: 12px;">Co dál?</div>
-      <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px;">
-        <button class="pill-button" onclick="quickFill('Ukaž mi celou historii zápasu 359845 včetně všech editů')">→ celá historie editů</button>
-        <button class="pill-button" onclick="quickFill('Najdi další zápasy přidané janosekem v posledních 24h')">→ co dělal janoseka dál</button>
-        <button class="pill-button" onclick="quickFill('Vytvoř ticket pro benesla aby překontroloval 1xbit2.com provider')">→ ticket na recheck</button>
+      <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+        <button class="pill-button" onclick="quickFill('U kv_4423 přepni režim na 7')">→ přepnout kv_4423 na mode 7</button>
+        <button class="pill-button" onclick="quickFill('Naklonuj tam všechny providery, co byly loni a vypiš mi je')">→ naklonovat loňské providery</button>
       </div>
     `);
   }
 
-  async function scenarioJanoseka() {
-    append(`<div style="margin: 8px 0;">Projedu aktivitu uživatele <code class="inline" style="color: var(--tan);">janoseka</code> za posledních 24 hodin.</div>`);
-    await toolCall(1, 1, 'search_logs',
-      '<span style="color: var(--cyan);">index</span>=<span style="color: var(--orange);">"crawler-events-*"</span>, <span style="color: var(--cyan);">query</span>=<span style="color: var(--orange);">"user:janoseka AND action:insert"</span>, <span style="color: var(--cyan);">range</span>=<span style="color: var(--orange);">"24h"</span>',
-      '23 hits', 187);
-    setStatus('● composing', 'var(--purple)');
+  // Step 2: Switch mode (write)
+  async function s2_switchMode() {
+    append(`<div style="margin: 8px 0;">Provedu změnu režimu na turnaji <code class="inline">kv_4423</code> (LEC Summer Split).</div>`);
     await delay(400);
 
-    append(`<div style="margin: 12px 0 8px;">Za 24h provedl <span style="color: var(--yellow);">23 insertů</span>. Rozdělení podle provideru:</div>`);
     append(`
-      <div class="data-block" style="font-size: 12px;">
-        <div style="display: grid; grid-template-columns: 1fr 60px; gap: 4px 12px;">
-          <span style="color: var(--orange);">1xbit2.com</span><span style="text-align: right; color: var(--tan);">14×</span>
-          <span style="color: var(--orange);">bet365-mirror.tv</span><span style="text-align: right; color: var(--tan);">5×</span>
-          <span style="color: var(--orange);">pinnacle.bet</span><span style="text-align: right; color: var(--tan);">3×</span>
-          <span style="color: var(--orange);">22bet.com</span><span style="text-align: right; color: var(--tan);">1×</span>
-        </div>
-        <div style="margin-top: 8px; padding-top: 8px; border-top: 0.5px solid var(--border); color: var(--text-dim);">14 z 23 (61 %) je 1xbit2.com — výrazně víc než průměr (12 %).</div>
-      </div>
-    `);
-    append(`<div style="margin: 10px 0;">Vypadá to, že janoseka dnes hodně řešil 1xbit2.com. Chceš zkontrolovat všech 14 insertů jestli prošly cml_check?</div>`);
-  }
-
-  async function scenarioTicket() {
-    append(`<div style="margin: 8px 0;">Připravím draft ticketu. Před vytvořením budu potřebovat tvoje potvrzení.</div>`);
-    await toolCall(1, 1, 'get_user',
-      '<span style="color: var(--cyan);">username</span>=<span style="color: var(--orange);">"benesl"</span>',
-      '1 row', 22);
-    await delay(300);
-    append(`
-      <div style="margin: 12px 0; padding: 12px; background: #252525; border: 0.5px solid var(--yellow); border-radius: 4px;">
-        <div style="color: var(--yellow); font-size: 11px; margin-bottom: 8px;">⚠ POTVRZENÍ — vytvoření ticketu v GitLabu</div>
+      <div style="margin: 10px 0; padding: 10px 12px; background: #252525; border: 0.5px solid var(--yellow); border-radius: 4px;">
+        <div style="color: var(--yellow); font-size: 11px; margin-bottom: 6px;">⚠ WRITE OPERATION — DC API</div>
         <div class="data-grid" style="grid-template-columns: 90px 1fr;">
-          <span style="color: var(--text-dim);">projekt:</span><span>crw-tools</span>
-          <span style="color: var(--text-dim);">assignee:</span><span style="color: var(--tan);">@benesl</span> <span style="color: var(--text-dim);">(Lukáš Beneš)</span>
-          <span style="color: var(--text-dim);">title:</span><span>Recheck 1xbit2.com provider na event 359845</span>
-          <span style="color: var(--text-dim);">labels:</span><span>cml-check, provider-review</span>
-        </div>
-        <div style="margin-top: 10px; padding: 8px 10px; background: var(--bg); border-radius: 3px; font-size: 11px; color: #aaa;">Insert proveden 15. 5. 2026 (janoseka), poslední cml_check je z 19. 6. 2025 na předchozí verzi entity. Prosím překontrolovat aktuální stav, screenshoty viz alerty puppeteer.</div>
-        <div style="display: flex; gap: 6px; margin-top: 10px;">
-          <button class="pill-button confirm" onclick="confirmTicket()">✓ potvrdit</button>
-          <button class="pill-button" onclick="cancelTicket()" style="color: var(--text);">zrušit</button>
+          <span style="color: var(--text-dim);">tournament:</span><span><code class="inline">kv_4423</code> · LEC Summer Split</span>
+          <span style="color: var(--text-dim);">změna:</span><span><span style="color: var(--yellow); text-decoration: line-through;">mode 6</span> → <span style="color: var(--teal); font-weight: 500;">mode 7</span></span>
+          <span style="color: var(--text-dim);">endpoint:</span><span style="color: var(--cyan);">PATCH /v2/kvido/season-starts/kv_4423</span>
         </div>
       </div>
     `);
-  }
 
-  async function scenarioHistory() {
-    append(`<div style="margin: 8px 0;">Vytáhnu kompletní timeline pro <code class="inline">event_id=359845</code>.</div>`);
-    await toolCall(1, 2, 'search_logs',
-      '<span style="color: var(--cyan);">index</span>=<span style="color: var(--orange);">"crawler-events-*"</span>, <span style="color: var(--cyan);">query</span>=<span style="color: var(--orange);">"entity_id:359845"</span>',
-      '7 hits', 156);
-    await toolCall(2, 2, 'query_db',
-      '<span style="color: var(--cyan);">table</span>=<span style="color: var(--orange);">"event_audit_log"</span>, <span style="color: var(--cyan);">where</span>=<span style="color: var(--orange);">"event_id=359845"</span>',
-      '4 rows', 41);
-    setStatus('● composing', 'var(--purple)');
-    await delay(400);
-    append(`
-      <div class="data-block" style="font-size: 12px; line-height: 1.7;">
-        <div style="color: var(--text-dim);">2025-06-19 17:32 · <span style="color: var(--purple);">check</span> · benesl · cml_check #172455489 ✓</div>
-        <div style="color: var(--text-dim);">2025-06-19 17:45 · <span style="color: var(--teal);">insert</span> · janoseka · provider bet365-mirror.tv</div>
-        <div style="color: var(--text-dim);">2025-11-03 09:12 · <span style="color: var(--orange);">remove</span> · system · provider bet365-mirror.tv (dead url)</div>
-        <div style="color: var(--text-dim);">2026-02-14 11:23 · <span style="color: var(--teal);">insert</span> · klara.n · provider pinnacle.bet</div>
-        <div style="color: var(--text-dim);">2026-04-08 14:55 · <span style="color: var(--orange);">remove</span> · klara.n · provider pinnacle.bet</div>
-        <div style="color: var(--yellow);">2026-05-15 16:40 · <span style="color: var(--teal);">insert</span> · janoseka · provider 1xbit2.com ← aktuální</div>
-        <div style="color: var(--text-dim);">2026-05-15 16:41 · <span style="color: var(--blue);">update</span> · system · sync metadata</div>
-      </div>
-    `);
-    append(`<div style="margin: 10px 0;">Zápas je v systému od června 2025. Měl několik providerů, většinou krátkodobě. Aktuální 1xbit2.com je první po měsíci bez providera (od 8. 4.).</div>`);
-  }
+    await delay(300);
 
-  async function scenarioGeneric(q) {
-    append(`<div style="margin: 8px 0;">V demu mám prepared scénáře pro: vyhledání zápasu 359845, aktivitu janoseka, historii editů a vytvoření ticketu. Tvůj dotaz <span style="color: var(--text-dim);">"${escapeHtml(q.substring(0, 60))}..."</span> by v reálné implementaci agent zpracoval voláním vhodných MCP toolů.</div>`);
-    append(`<div style="margin: 10px 0; color: var(--text-dim); font-size: 12px;">Zkus některý z připravených dotazů ↑</div>`);
-  }
+    await toolCall(1, 1, 'dc_api.update_season_start_mode',
+      '<span style="color: var(--cyan);">tournament_id</span>=<span style="color: var(--orange);">"kv_4423"</span>, <span style="color: var(--cyan);">mode</span>=<span style="color: var(--orange);">7</span>',
+      '1 updated', 94, true);
 
-  function confirmTicket() {
+    await delay(300);
+
     append(`
       <div style="margin: 8px 0; padding: 10px 12px; background: var(--success-bg); border-left: 2px solid var(--green); border-radius: 0 4px 4px 0; font-size: 12px;">
-        <div style="color: var(--green);">✓ Ticket vytvořen: <a href="#" style="color: var(--cyan);">crw-tools#5891</a></div>
-        <div style="color: var(--text-dim); margin-top: 4px;">audit log: evt_a4f72b · assignee notifikován (Slack DM)</div>
+        <div style="color: var(--green);">✓ Režim u <code class="inline">kv_4423</code> přepnut na <span style="color: var(--teal);">mode 7</span></div>
+        <div style="color: var(--text-dim); margin-top: 4px;">audit log: evt_dc_8721c · proveden: michal (via AI agent)</div>
+      </div>
+    `);
+
+    s2.step = 2;
+
+    await delay(400);
+
+    append(`<div style="margin: 12px 0;">Hotovo. Všechny 4 turnaje teď mají mode 7. Co dál? Můžu třeba naklonovat loňské providery.</div>`);
+
+    append(`
+      <div style="display: flex; gap: 6px; margin: 10px 0; flex-wrap: wrap;">
+        <button class="pill-button" onclick="quickFill('Naklonuj tam všechny providery, co byly loni a vypiš mi je')">→ naklonovat loňské providery</button>
       </div>
     `);
   }
 
-  function cancelTicket() {
-    append(`<div style="margin: 8px 0; color: var(--text-dim); font-size: 12px;">Ticket zrušen, nic se nevytvořilo.</div>`);
+  // Step 3: List last year's providers
+  async function s2_listProviders() {
+    append(`<div style="margin: 8px 0;">Vytáhnu loňské providery pro všechny 4 turnaje z předchozí sezony.</div>`);
+    await delay(400);
+
+    await toolCall(1, 1, 'dc_api.get_last_season_providers',
+      '<span style="color: var(--cyan);">tournament_ids</span>=<span style="color: var(--orange);">["kv_4421","kv_4422","kv_4423","kv_4424"]</span>, <span style="color: var(--cyan);">season</span>=<span style="color: var(--orange);">"2025"</span>',
+      '4 providers', 203);
+
+    setStatus('● composing', 'var(--purple)');
+    await delay(400);
+
+    append(`<div style="margin: 12px 0 6px;">Loni (sezona 2025) byli na těchto turnajích aktivní tito <span style="color: var(--yellow);">4 provideři</span>:</div>`);
+
+    append(`
+      <div class="data-block">
+        <div style="display: grid; grid-template-columns: 24px 1fr 100px; gap: 6px 12px; font-size: 12px;">
+          <span style="color: var(--text-dim);">1.</span><span style="color: var(--orange);">Esport.io</span><span style="color: var(--text-dim); text-align: right;">native API</span>
+          <span style="color: var(--text-dim);">2.</span><span style="color: var(--orange);">Fortuna.pl</span><span style="color: var(--text-dim); text-align: right;">scraper</span>
+          <span style="color: var(--text-dim);">3.</span><span style="color: var(--orange);">1xbit2.com</span><span style="color: var(--text-dim); text-align: right;">scraper</span>
+          <span style="color: var(--text-dim);">4.</span><span style="color: var(--orange);">gg.bet.com</span><span style="color: var(--text-dim); text-align: right;">scraper</span>
+        </div>
+      </div>
+    `);
+
+    s2.step = 3;
+
+    await delay(500);
+
+    append(`
+      <div style="margin: 14px 0 8px; padding: 10px 12px; background: var(--warning-bg); border-left: 2px solid var(--yellow); border-radius: 0 4px 4px 0;">
+        <div style="color: var(--yellow); font-size: 11px; margin-bottom: 4px;">⚠ Potvrzení potřebné</div>
+        <div style="font-size: 12px; line-height: 1.6;">Mohu naklonovat všechny 4 providery na všechny 4 turnaje této sezony? To znamená <strong style="color: var(--yellow);">16 insertů</strong> celkem (4 turnaje × 4 provideři).</div>
+        <div style="display: flex; gap: 6px; margin-top: 10px;">
+          <button class="pill-button confirm" onclick="quickFill('Ano, doplň je. Jen místo 1xbit2.com doplň bwin.com')">✓ doplnit (s úpravou)</button>
+          <button class="pill-button" onclick="quickFill('Zrušit')" style="color: var(--text);">zrušit</button>
+        </div>
+      </div>
+    `);
+  }
+
+  // Step 4: Replace 1xbit with bwin and execute
+  async function s2_replaceAndExecute() {
+    append(`<div style="margin: 8px 0;">Rozumím. Místo <code class="inline">1xbit2.com</code> použiju <code class="inline">bwin.com</code>. Ověřím, že bwin.com je v DC API zaregistrovaný a má aktivní integraci.</div>`);
+    await delay(400);
+
+    await toolCall(1, 2, 'dc_api.get_provider',
+      '<span style="color: var(--cyan);">domain</span>=<span style="color: var(--orange);">"bwin.com"</span>',
+      '1 found', 38);
+
+    await delay(300);
+
+    append(`
+      <div style="margin: 10px 0; padding: 10px 12px; background: #252525; border: 0.5px solid var(--yellow); border-radius: 4px;">
+        <div style="color: var(--yellow); font-size: 11px; margin-bottom: 6px;">⚠ WRITE PREVIEW — 16 insertů</div>
+        <div style="font-size: 12px; color: var(--text); margin-bottom: 8px;">Finální seznam providerů, kteří se přidají na všechny 4 turnaje:</div>
+        <div style="display: grid; grid-template-columns: 24px 1fr 100px; gap: 4px 12px; font-size: 12px;">
+          <span style="color: var(--text-dim);">1.</span><span style="color: var(--orange);">Esport.io</span><span style="color: var(--text-dim); text-align: right;">native API</span>
+          <span style="color: var(--text-dim);">2.</span><span style="color: var(--orange);">Fortuna.pl</span><span style="color: var(--text-dim); text-align: right;">scraper</span>
+          <span style="color: var(--text-dim);">3.</span><span><span style="color: var(--red); text-decoration: line-through;">1xbit2.com</span> → <span style="color: var(--teal);">bwin.com</span></span><span style="color: var(--text-dim); text-align: right;">scraper</span>
+          <span style="color: var(--text-dim);">4.</span><span style="color: var(--orange);">gg.bet.com</span><span style="color: var(--text-dim); text-align: right;">scraper</span>
+        </div>
+        <div style="margin-top: 10px; font-size: 12px; color: var(--text-dim);">Cílové turnaje: kv_4421, kv_4422, kv_4423, kv_4424</div>
+      </div>
+    `);
+
+    await delay(400);
+
+    await toolCall(2, 2, 'dc_api.bulk_add_providers',
+      '<span style="color: var(--cyan);">tournaments</span>=<span style="color: var(--orange);">[kv_4421..kv_4424]</span>, <span style="color: var(--cyan);">providers</span>=<span style="color: var(--orange);">["Esport.io","Fortuna.pl","bwin.com","gg.bet.com"]</span>',
+      '16 inserted', 412, true);
+
+    setStatus('● composing', 'var(--purple)');
+    await delay(400);
+
+    append(`
+      <div style="margin: 8px 0; padding: 10px 12px; background: var(--success-bg); border-left: 2px solid var(--green); border-radius: 0 4px 4px 0; font-size: 12px;">
+        <div style="color: var(--green);">✓ Hotovo — 16 providerů přidáno</div>
+        <div class="data-grid" style="grid-template-columns: 90px 1fr; margin-top: 8px;">
+          <span style="color: var(--text-dim);">turnajů:</span><span>4 (kv_4421, kv_4422, kv_4423, kv_4424)</span>
+          <span style="color: var(--text-dim);">providerů:</span><span>4 (Esport.io, Fortuna.pl, bwin.com, gg.bet.com)</span>
+          <span style="color: var(--text-dim);">změna:</span><span><span style="color: var(--red); text-decoration: line-through;">1xbit2.com</span> nahrazen <span style="color: var(--teal);">bwin.com</span></span>
+          <span style="color: var(--text-dim);">audit:</span><span style="color: var(--tan);">evt_dc_8722f</span>
+        </div>
+      </div>
+    `);
+
+    s2.step = 4;
+
+    await delay(400);
+
+    append(`<div style="margin: 12px 0;">Vše dokončeno. Turnaje jsou připravené pro start sezony s aktualizovanými providery a sjednoceným režimem 7.</div>`);
+  }
+
+  // Generic fallback
+  async function scenarioGeneric(q) {
+    append(`<div style="margin: 8px 0;">V demu mám prepared scénáře pouze pro DC API: vyhledání zápasu (359845) a správu Kvido Esport season startů. Tvůj dotaz <span style="color: var(--text-dim);">"${escapeHtml(q.substring(0, 60))}..."</span> by v reálné implementaci agent zpracoval voláním vhodných DC API endpointů.</div>`);
+    append(`<div style="margin: 10px 0; color: var(--text-dim); font-size: 12px;">Zkus některý z připravených scénářů ↓</div>`);
   }
 </script>
 </body>
