@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LSD AI Agent — DC API prototype</title>
+<title>Livesport AI Agent — DC API prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -110,7 +110,7 @@
     <div id="terminal">
       <div style="color: var(--blue);">$ livesport-ai --session</div>
       <div style="color: var(--text-dim); margin: 4px 0 14px;">Connected to Claude (sonnet-4.6) · DC API endpoint: https://dc-api.livesport.internal/v2</div>
-      <div style="color: var(--text-faint); font-size: 12px;">Klikni na scénář níže</div>
+      <div style="color: var(--text-faint); font-size: 12px;">Klikni na scénář níže...</div>
     </div>
 
     <div class="terminal-input">
@@ -123,14 +123,14 @@
   <div class="demo-controls">
     <h3>Demo scénáře</h3>
     <div class="scenarios">
-      <button class="scenario-btn primary" onclick="demoQuery1()" id="btn-1">1. U zápasu 359845 mohlo dojít k chybě (read-only)</button>
-      <button class="scenario-btn primary" onclick="demoQuery2()" id="btn-2">2. Kvido Esport season start — režimy + providers (write)</button>
+      <button class="scenario-btn primary" onclick="demoQuery1()" id="btn-1">1. Vyšetřit zápas 359845 (read-only)</button>
+      <button class="scenario-btn primary" onclick="demoQuery2()" id="btn-2">2. Kvido Esport season — režimy + providers (write)</button>
       <button class="scenario-btn" onclick="resetTerminal()">↺ reset</button>
     </div>
   </div>
 
   <div class="footer">
-    Prototyp
+    Prototyp · <a href="https://github.com/Hornok97/product-cfor-LSD-to-DC---api">github.com/Hornok97/product-cfor-LSD-to-DC---api</a>
   </div>
 </div>
 
@@ -167,7 +167,7 @@
     return s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
   }
 
-  async function typeText(element, text, speed = 10) {
+  async function typeText(element, text, speed = 22) {
     for (let i = 0; i < text.length; i++) {
       element.textContent += text[i];
       if (i % 3 === 0) await delay(speed);
@@ -184,8 +184,8 @@
     typedSpan.style.flex = '1';
     typedSpan.style.fontFamily = "'JetBrains Mono', monospace";
     typedSpan.style.fontSize = '13px';
-    await typeText(typedSpan, query, 8);
-    await delay(400);
+    await typeText(typedSpan, query, 18);
+    await delay(900);
     typedSpan.remove();
     input.style.display = '';
     input.disabled = false;
@@ -242,10 +242,14 @@
     setStatus('● thinking', 'var(--yellow)');
 
     append(`<div style="margin: 14px 0 4px;"><span style="color: var(--teal);">michal ›</span> ${escapeHtml(q)}</div>`);
-    await delay(400);
+    await delay(1400);
 
     append(`<div style="color: var(--text-dim); margin: 8px 0 6px;">────── claude ──────</div>`);
-    await delay(300);
+    await delay(700);
+
+    const thinkingNode = append(`<div style="color: var(--text-faint); font-size: 12px; font-style: italic; margin: 4px 0 8px;"><span class="blink-dot" style="background: var(--text-faint);"></span> přemýšlím nad tím...</div>`);
+    await delay(1600);
+    thinkingNode.remove();
 
     const ql = q.toLowerCase();
 
@@ -281,14 +285,14 @@
         <div class="result" style="color: var(--text-dim); font-size: 11px; margin-top: 4px;"><span class="blink-dot"></span> calling DC API...</div>
       </div>
     `);
-    await delay(550 + Math.random() * 350);
+    await delay(1400 + Math.random() * 800);
     div.querySelector('.result').innerHTML = `<span style="color: var(--green);">✓ ${hits} · ${ms}ms · DC API /v2</span>`;
   }
 
   // ═══════════════════════ SCENARIO 1 ═══════════════════════
   async function scenarioMatch() {
     append(`<div style="margin: 8px 0;">Jdu na to. Rozdělím to do tří dotazů na DC API — insert events, check events a aktivní providery pro <code class="inline">event_id=359845</code>.</div>`);
-    await delay(500);
+    await delay(1300);
 
     await toolCall(1, 3, 'dc_api.get_event_logs',
       '<span style="color: var(--cyan);">event_id</span>=<span style="color: var(--orange);">359845</span>, <span style="color: var(--cyan);">action</span>=<span style="color: var(--orange);">"insert"</span>',
@@ -301,7 +305,7 @@
       '1 row', 34);
 
     setStatus('● composing', 'var(--purple)');
-    await delay(500);
+    await delay(1300);
 
     append(`<div style="margin: 14px 0 8px;">Hotovo. Tady je rekonstrukce co se se zápasem <code class="inline">359845</code> dělo:</div>`);
 
@@ -318,7 +322,7 @@
         </div>
       </div>
     `);
-    await delay(300);
+    await delay(800);
 
     append(`
       <div class="data-block">
@@ -332,7 +336,7 @@
         </div>
       </div>
     `);
-    await delay(300);
+    await delay(800);
 
     append(`
       <div class="data-block">
@@ -344,7 +348,7 @@
         </div>
       </div>
     `);
-    await delay(400);
+    await delay(1100);
 
     append(`
       <div class="warning">
@@ -352,7 +356,7 @@
         <div style="font-size: 12px; line-height: 1.6;">Check proběhl <span style="color: var(--yellow);">19. 6. 2025</span>, ale insert je z <span style="color: var(--yellow);">15. 5. 2026</span>. Check tedy proběhl <span style="color: var(--yellow);">před</span> insertem o ~11 měsíců — vypadá to, že check byl na předchozí verzi entity (event_id 8664021), zatímco aktuální insert provider zatím neprošel cml_check. To by mohl být ten "špatný insert", o kterém mluvíš.</div>
       </div>
     `);
-    await delay(300);
+    await delay(800);
 
     append(`<div style="margin: 12px 0 6px;">Mám k tomu i screenshoty z puppeteer alertů:</div>`);
 
@@ -368,14 +372,14 @@
   // Step 1: List tournaments
   async function s2_listTournaments() {
     append(`<div style="margin: 8px 0;">Vytáhnu seznam vypsaných Kvido season startů pro sport <code class="inline">Esports</code>.</div>`);
-    await delay(400);
+    await delay(1100);
 
     await toolCall(1, 1, 'dc_api.get_kvido_season_starts',
       '<span style="color: var(--cyan);">sport</span>=<span style="color: var(--orange);">"esports"</span>, <span style="color: var(--cyan);">status</span>=<span style="color: var(--orange);">"published"</span>',
       '4 tournaments', 168);
 
     setStatus('● composing', 'var(--purple)');
-    await delay(400);
+    await delay(1100);
 
     append(`<div style="margin: 12px 0 6px;">Našel jsem <span style="color: var(--yellow);">4 vypsané turnaje</span>:</div>`);
 
@@ -395,7 +399,7 @@
       </div>
     `);
 
-    await delay(500);
+    await delay(1300);
 
     append(`
       <div style="margin: 10px 0;">Souhrn: <span style="color: var(--teal);">3 turnaje mají mode 7</span>, <span style="color: var(--yellow);">1 turnaj má mode 6</span> — <code class="inline">kv_4423</code> (LEC Summer Split). Vypadá to jako odchylka, ostatní LoL/CS2/Dota turnaje této sezony jedou standardně na mode 7.</div>
@@ -403,7 +407,7 @@
 
     s2.step = 1;
 
-    await delay(400);
+    await delay(1100);
 
     append(`
       <div style="margin: 14px 0 6px; color: var(--text-dim); font-size: 12px;">Co dál?</div>
@@ -417,7 +421,7 @@
   // Step 2: Switch mode (write)
   async function s2_switchMode() {
     append(`<div style="margin: 8px 0;">Provedu změnu režimu na turnaji <code class="inline">kv_4423</code> (LEC Summer Split).</div>`);
-    await delay(400);
+    await delay(1100);
 
     append(`
       <div style="margin: 10px 0; padding: 10px 12px; background: #252525; border: 0.5px solid var(--yellow); border-radius: 4px;">
@@ -430,13 +434,13 @@
       </div>
     `);
 
-    await delay(300);
+    await delay(800);
 
     await toolCall(1, 1, 'dc_api.update_season_start_mode',
       '<span style="color: var(--cyan);">tournament_id</span>=<span style="color: var(--orange);">"kv_4423"</span>, <span style="color: var(--cyan);">mode</span>=<span style="color: var(--orange);">7</span>',
       '1 updated', 94, true);
 
-    await delay(300);
+    await delay(800);
 
     append(`
       <div style="margin: 8px 0; padding: 10px 12px; background: var(--success-bg); border-left: 2px solid var(--green); border-radius: 0 4px 4px 0; font-size: 12px;">
@@ -447,7 +451,7 @@
 
     s2.step = 2;
 
-    await delay(400);
+    await delay(1100);
 
     append(`<div style="margin: 12px 0;">Hotovo. Všechny 4 turnaje teď mají mode 7. Co dál? Můžu třeba naklonovat loňské providery.</div>`);
 
@@ -461,14 +465,14 @@
   // Step 3: List last year's providers
   async function s2_listProviders() {
     append(`<div style="margin: 8px 0;">Vytáhnu loňské providery pro všechny 4 turnaje z předchozí sezony.</div>`);
-    await delay(400);
+    await delay(1100);
 
     await toolCall(1, 1, 'dc_api.get_last_season_providers',
       '<span style="color: var(--cyan);">tournament_ids</span>=<span style="color: var(--orange);">["kv_4421","kv_4422","kv_4423","kv_4424"]</span>, <span style="color: var(--cyan);">season</span>=<span style="color: var(--orange);">"2025"</span>',
       '4 providers', 203);
 
     setStatus('● composing', 'var(--purple)');
-    await delay(400);
+    await delay(1100);
 
     append(`<div style="margin: 12px 0 6px;">Loni (sezona 2025) byli na těchto turnajích aktivní tito <span style="color: var(--yellow);">4 provideři</span>:</div>`);
 
@@ -485,7 +489,7 @@
 
     s2.step = 3;
 
-    await delay(500);
+    await delay(1300);
 
     append(`
       <div style="margin: 14px 0 8px; padding: 10px 12px; background: var(--warning-bg); border-left: 2px solid var(--yellow); border-radius: 0 4px 4px 0;">
@@ -502,13 +506,13 @@
   // Step 4: Replace 1xbit with bwin and execute
   async function s2_replaceAndExecute() {
     append(`<div style="margin: 8px 0;">Rozumím. Místo <code class="inline">1xbit2.com</code> použiju <code class="inline">bwin.com</code>. Ověřím, že bwin.com je v DC API zaregistrovaný a má aktivní integraci.</div>`);
-    await delay(400);
+    await delay(1100);
 
     await toolCall(1, 2, 'dc_api.get_provider',
       '<span style="color: var(--cyan);">domain</span>=<span style="color: var(--orange);">"bwin.com"</span>',
       '1 found', 38);
 
-    await delay(300);
+    await delay(800);
 
     append(`
       <div style="margin: 10px 0; padding: 10px 12px; background: #252525; border: 0.5px solid var(--yellow); border-radius: 4px;">
@@ -524,14 +528,14 @@
       </div>
     `);
 
-    await delay(400);
+    await delay(1100);
 
     await toolCall(2, 2, 'dc_api.bulk_add_providers',
       '<span style="color: var(--cyan);">tournaments</span>=<span style="color: var(--orange);">[kv_4421..kv_4424]</span>, <span style="color: var(--cyan);">providers</span>=<span style="color: var(--orange);">["Esport.io","Fortuna.pl","bwin.com","gg.bet.com"]</span>',
       '16 inserted', 412, true);
 
     setStatus('● composing', 'var(--purple)');
-    await delay(400);
+    await delay(1100);
 
     append(`
       <div style="margin: 8px 0; padding: 10px 12px; background: var(--success-bg); border-left: 2px solid var(--green); border-radius: 0 4px 4px 0; font-size: 12px;">
@@ -547,7 +551,7 @@
 
     s2.step = 4;
 
-    await delay(400);
+    await delay(1100);
 
     append(`<div style="margin: 12px 0;">Vše dokončeno. Turnaje jsou připravené pro start sezony s aktualizovanými providery a sjednoceným režimem 7.</div>`);
   }
